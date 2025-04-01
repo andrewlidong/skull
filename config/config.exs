@@ -20,7 +20,7 @@ config :skull, SkullWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Skull.PubSub,
-  live_view: [signing_salt: "5iQ7n+0J"]
+  live_view: [signing_salt: "OWtZji5i"]
 
 # Configures the mailer
 #
