@@ -42,8 +42,6 @@ defmodule SkullWeb do
         formats: [:html, :json],
         layouts: [html: SkullWeb.Layouts]
 
-      use Gettext, backend: SkullWeb.Gettext
-
       import Plug.Conn
 
       unquote(verified_routes())
@@ -82,9 +80,6 @@ defmodule SkullWeb do
 
   defp html_helpers do
     quote do
-      # Translation
-      use Gettext, backend: SkullWeb.Gettext
-
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components

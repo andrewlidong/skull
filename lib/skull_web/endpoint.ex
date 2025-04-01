@@ -7,7 +7,7 @@ defmodule SkullWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_skull_key",
-    signing_salt: "cfFYz3t0",
+    signing_salt: "LYhQkhjo",
     same_site: "Lax"
   ]
 
