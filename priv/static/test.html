@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skull Game WebSocket Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #messages { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        .message { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>Skull Game WebSocket Test</h1>
+    
+    <div>
+        <label for="gameId">Game ID:</label>
+        <input type="text" id="gameId" value="test-game">
+        
+        <label for="playerId">Player ID:</label>
+        <input type="text" id="playerId" value="player1">
+        
+        <button onclick="joinGame()">Join Game</button>
+    </div>
+
+    <div>
+        <input type="text" id="messageInput" placeholder="Type a message">
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
+
+    <div id="messages"></div>
+
+    <script>
+        let socket;
+        let channel;
+
+        function joinGame() {
+            const gameId = document.getElementById('gameId').value;
+            const playerId = document.getElementById('playerId').value;
+
+            // Connect to the socket
+            socket = new Phoenix.Socket("/socket", {
+                params: { player_id: playerId }
+            });
+            socket.connect();
+
+            // Join the game channel
+            channel = socket.channel(`game:${gameId}`, {});
+            
+            channel.join()
+                .receive("ok", resp => {
+                    addMessage("Successfully joined the game!");
+                })
+                .receive("error", resp => {
+                    addMessage("Failed to join the game: " + resp);
+                });
+
+            // Listen for messages
+            channel.on("new_msg", payload => {
+                addMessage("Received: " + JSON.stringify(payload));
+            });
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('messageInput').value;
+            if (channel) {
+                channel.push("new_msg", { body: message })
+                    .receive("ok", () => {
+                        addMessage("Sent: " + message);
+                    })
+                    .receive("error", resp => {
+                        addMessage("Failed to send message: " + resp);
+                    });
+            } else {
+                addMessage("Not connected to a game!");
+            }
+        }
+
+        function addMessage(message) {
+            const messagesDiv = document.getElementById('messages');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message';
+            messageElement.textContent = message;
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phoenix/1.7.10/umd/phoenix.min.js"></script>
+</body>
+</html> 
