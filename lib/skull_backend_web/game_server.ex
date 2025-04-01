@@ -13,6 +13,8 @@ defmodule Skull.GameServer do
     GenServer.call(via_tuple(game_id), {:make_move, player_id, type, data})
   end
 
+  # test2
+
   def player_joined(game_id, player_id) do
     GenServer.call(via_tuple(game_id), {:player_joined, player_id})
   end
